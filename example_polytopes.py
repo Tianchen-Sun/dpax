@@ -53,8 +53,6 @@ q2=R.from_matrix(Q2).as_quat()
 q1=jnp.roll(q1,1)
 q2=jnp.roll(q2,1)
 alpha = polytope_proximity(A1,b1,r1,q1,A2,b2,r2,q2)
-
-
 print("alpha: ", alpha)
 
 # calculate all the gradients 

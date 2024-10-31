@@ -19,6 +19,8 @@ Alternatively, to install from source:
 
 ```bash
 $ python setup.py install
+sudo python3 setup.py install
+
 ```
 
 ## Basic Usage (Capsules)

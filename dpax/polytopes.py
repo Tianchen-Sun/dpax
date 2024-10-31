@@ -6,7 +6,8 @@ from jax import jvp
 import jax.numpy as jnp 
 from jax.scipy.spatial.transform import Rotation as R
 from dpax.pdip_solver import *
-
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 """
 function to create standard form min c'x st Gx<=h from 
 the description of two polytopes using the DCOL alg. 
@@ -104,3 +105,4 @@ def _polytope_proximity_gradient(primals, targets):
   
   return primal_out, tangent_out 
   
+grad_f = jit(grad(polytope_proximity, argnums =(2,3) ))#(0,1,2,3,4,5,6,7)
