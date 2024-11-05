@@ -1,2 +1,6 @@
-jax>=0.4.0
-jaxlib>=0.4.0
+jax==0.4.30
+jaxlib
+scipy==1.10
+ecos
+numpy==1.24.4
+ml-dtypes==0.4.0

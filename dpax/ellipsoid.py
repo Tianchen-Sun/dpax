@@ -10,7 +10,7 @@ from jax.scipy.spatial.transform import Rotation as R
 import dpax
 from dpax.mrp import dcm_from_mrp
 
-
+@jit
 def ellipsoid_problem_matrices(P, r, q):
     """
     Parameters:

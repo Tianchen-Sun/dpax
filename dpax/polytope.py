@@ -10,6 +10,7 @@ from jax.scipy.spatial.transform import Rotation as R
 import dpax
 from dpax.mrp import dcm_from_mrp
 
+@jit
 def create_rect_prism(length, width, height):
 
   A = jnp.array([
@@ -34,6 +35,8 @@ def create_rect_prism(length, width, height):
   b = jax.vmap(jnp.dot, in_axes = (0,0))(A, cs)
 
   return A, b 
+
+@jit
 def polytope_problem_matrices(A,b,r,q):
     """
     Parameters:

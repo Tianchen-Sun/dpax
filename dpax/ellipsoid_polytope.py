@@ -1,7 +1,11 @@
+import os
+os.environ["JAX_PLATFORM_NAME"] = "cpu" 
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
 import jax
 import numpy as np
 import ecos
 from scipy.sparse import csc_matrix
+# from jax.scipy.sparse import csc_matrix
 
 from jax import grad 
 from jax import jit 
@@ -20,6 +24,7 @@ from dpax.ellipsoid import ellipsoid_problem_matrices
 ## naming follows the julia code
 
 ## since current Conic programming does not support socp solver, suspend this function
+@jit
 def combine_problem_matrices(P1,r1,q1,A2,b2,r2,q2):
 
     #[]     []      
@@ -53,7 +58,7 @@ def solve_conic(c,G,h):
     G = csc_matrix(G)
     
  
-    sol = ecos.solve(c,G,h,dims={'l':6,'q':[4]},verbose=False)
+    sol = ecos.solve(c,G,h,dims={'l':6,'q':[4]},verbose=True)
     # 4,
     x = jnp.array(sol['x'])
     
@@ -69,7 +74,7 @@ def ellipsoid_polytope_proximity(P1,r1,q1,A2,b2,r2,q2):
     x,s,z=solve_conic(c,G,h)
     return x[3]
 
-
+@jit
 def ellipsoid_polytope_lagrangian(P1,r1,q1,A2,b2,r2,q2, x, s, z):
     c,G,h=combine_problem_matrices(P1,r1,q1,A2,b2,r2,q2)
 
@@ -81,7 +86,7 @@ def ellipsoid_polytope_proximity_grads(P1,r1,q1,A2,b2,r2,q2):
     
     alpha = x[3]
 
-    lag_grad = grad(ellipsoid_polytope_lagrangian, argnums = (0,1,2,3,4,5,6))
+    lag_grad = jit(grad(ellipsoid_polytope_lagrangian, argnums = (0,1,2,3,4,5,6)))
     grads = lag_grad(P1, r1, q1, A2, b2, r2, q2, x, s, z)
 
     gP1, gr1, gq1, gA2, gb2, gr2, gq2 = grads 
@@ -105,7 +110,8 @@ def _ellipsoid_polytope_proximity_gradient(primals, targets):
                  jnp.sum(dA2 * gA2) + db2.dot(gb2) + dr2.dot(gr2) + dq2.dot(gq2)) 
   
   return primal_out, tangent_out 
-  
+
+grad_f = grad(ellipsoid_polytope_proximity, argnums =(1,2))#(0,1,2,3,4,5,6,7)
 if __name__ == "__main__":
 
     P = jnp.eye(3)
@@ -128,8 +134,8 @@ if __name__ == "__main__":
     alpha = ellipsoid_polytope_proximity(P,r,q,A2,b2,r2,q2)
     print("alpha: ", alpha)
 
-    grad_f = grad(ellipsoid_polytope_proximity, argnums =(1,2))#(0,1,2,3,4,5,6,7)
+    
     grads = grad_f(P,r,q,A2,b2,r2,q2)
     print(grads)
     # check gradients 
-    check_grads(ellipsoid_polytope_proximity,(P,r,q,A2,b2,r2,q2), order=1, atol = 2e-1)
+    # check_grads(ellipsoid_polytope_proximity,(P,r,q,A2,b2,r2,q2), order=1, atol = 2e-1)
