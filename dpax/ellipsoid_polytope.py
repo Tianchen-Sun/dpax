@@ -1,8 +1,9 @@
 import os
-os.environ["JAX_PLATFORM_NAME"] = "cpu" 
+# os.environ["JAX_PLATFORM_NAME"] = "cpu" 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
 import jax
 import numpy as np
+import time
 import ecos
 from scipy.sparse import csc_matrix
 # from jax.scipy.sparse import csc_matrix
@@ -58,7 +59,7 @@ def solve_conic(c,G,h):
     G = csc_matrix(G)
     
  
-    sol = ecos.solve(c,G,h,dims={'l':6,'q':[4]},verbose=True)
+    sol = ecos.solve(c,G,h,dims={'l':6,'q':[4]},verbose=False)
     # 4,
     x = jnp.array(sol['x'])
     
@@ -86,7 +87,7 @@ def ellipsoid_polytope_proximity_grads(P1,r1,q1,A2,b2,r2,q2):
     
     alpha = x[3]
 
-    lag_grad = jit(grad(ellipsoid_polytope_lagrangian, argnums = (0,1,2,3,4,5,6)))
+    lag_grad = grad(ellipsoid_polytope_lagrangian, argnums = (0,1,2,3,4,5,6))
     grads = lag_grad(P1, r1, q1, A2, b2, r2, q2, x, s, z)
 
     gP1, gr1, gq1, gA2, gb2, gr2, gq2 = grads 
@@ -130,12 +131,15 @@ if __name__ == "__main__":
     q2=jnp.array([0.0,0.0,0.0,1.0])
     q2=jnp.roll(q2,1)
 
- 
-    alpha = ellipsoid_polytope_proximity(P,r,q,A2,b2,r2,q2)
-    print("alpha: ", alpha)
 
-    
-    grads = grad_f(P,r,q,A2,b2,r2,q2)
-    print(grads)
+    start_time=time.time()
+    for i in range(50):
+        alpha = ellipsoid_polytope_proximity(P,r,q,A2,b2,r2,q2)
+        # print("alpha: ", alpha)
+
+        
+        grads = grad_f(P,r,q,A2,b2,r2,q2)
+    print("Time elapsed: ", time.time()-start_time)
+    # print(grads)
     # check gradients 
     # check_grads(ellipsoid_polytope_proximity,(P,r,q,A2,b2,r2,q2), order=1, atol = 2e-1)

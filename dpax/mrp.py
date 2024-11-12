@@ -36,7 +36,7 @@ def proximityMRP(R1,L1,r1,p1,R2,L2,r2,p2):
 
 	return cost(z,Q,q) + r - (R1 + R2)**2
 
-@jit 
+#@jit 
 def lagrangianMRP(R1,L1,r1,p1,R2,L2,r2,p2,z):
 	a,b = get_ends(L1,r1,p1)
 	c,d = get_ends(L2,r2,p2)

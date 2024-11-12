@@ -19,7 +19,7 @@ def proximity(R1,a1,b1,R2,a2,b2):
 
 	return cost(z,Q,q) + r - (R1 + R2)**2
 
-@jit 
+#@jit 
 def lagrangian(R1,a1,b1,R2,a2,b2,z):
 	L1 = jnp.linalg.norm(a1 - b1)
 	L2 = jnp.linalg.norm(a2 - b2)

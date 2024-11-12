@@ -17,14 +17,14 @@ KKT systems are solved via reduction
 reduction: Nocedal and Wright, Numerical Optimization, pg 482 (16.62)
 """
 
-@jit 
+#@jit 
 def ort_linesearch(x,dx):
   # maximum alpha <= 1 st x + alpha * dx >= 0 
   body = lambda _x, _dx: jnp.where(_dx<0, -_x/_dx, jnp.inf)
   batch = jax.vmap(body, in_axes = (0,0))
   return jnp.min(jnp.array([1.0, jnp.min(batch(x,dx))]))
 
-@jit 
+#@jit 
 def centering_params(s, z, ds_a, dz_a):
   # duality gap + cc term in predictor-corrector PDIP 
   mu = jnp.dot(s, z)/len(s)
@@ -39,7 +39,7 @@ def centering_params(s, z, ds_a, dz_a):
   return sigma, mu 
 
 
-@jit 
+#@jit 
 def pdip_step(inputs):
   q,G,h,x,s,z,pdip_iter = inputs 
   
@@ -81,7 +81,7 @@ def pdip_step(inputs):
   return (q,G,h,x,s,z,pdip_iter + 1)
 
 
-@jit 
+#@jit 
 def solve_lp(q,G,h):
 
   ns, nx = G.shape

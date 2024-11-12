@@ -56,14 +56,14 @@ def problem_matrices(A1, b1,r1,q1,A2,b2,r2,q2):
 
 
 @custom_jvp
-@jit 
+#@jit 
 def polytope_proximity(A1,b1,r1,q1,A2,b2,r2,q2):
   
   c, G, h = problem_matrices(A1,b1,r1,q1,A2,b2,r2,q2)
   x,s,z = solve_lp(c,G,h)
   return x[3]
 
-@jit 
+#@jit 
 def polytope_lagrangian(A1,b1,r1,q1,A2,b2,r2,q2, x, s, z):
 
   c, G, h = problem_matrices(A1,b1,r1,q1,A2,b2,r2,q2)
@@ -71,7 +71,7 @@ def polytope_lagrangian(A1,b1,r1,q1,A2,b2,r2,q2, x, s, z):
   # ommit the cost term since c'x doesn't depend on problem data 
   return z.dot(G @ x - h)
 
-@jit 
+#@jit 
 def polytope_proximity_grads(A1,b1,r1,q1,A2,b2,r2,q2):
 
   c, G, h = problem_matrices(A1,b1,r1,q1,A2,b2,r2,q2)
@@ -89,7 +89,7 @@ def polytope_proximity_grads(A1,b1,r1,q1,A2,b2,r2,q2):
 ## Jacobian-vector product
 ## for customized autodiff
 @polytope_proximity.defjvp
-@jit 
+#@jit 
 def _polytope_proximity_gradient(primals, targets):
   A1,b1,r1,q1,A2,b2,r2,q2 = primals 
   dA1,db1,dr1,dq1,dA2,db2,dr2,dq2 = targets 
